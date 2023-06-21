@@ -1,0 +1,2132 @@
+[
+    {
+        "id": "20f0b12f04420cc0",
+        "type": "tab",
+        "label": "Flow_Nivel-Tanques",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "dc07208db367a888",
+        "type": "mqtt in",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "topic": "Leitura_ESP32_Sensores",
+        "qos": "1",
+        "datatype": "auto",
+        "broker": "938316eab6c61a55",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 250,
+        "y": 900,
+        "wires": [
+            [
+                "4321eefddfc5426a",
+                "de19fc446e81bfd4",
+                "512e77a861734952"
+            ]
+        ]
+    },
+    {
+        "id": "4321eefddfc5426a",
+        "type": "json",
+        "z": "20f0b12f04420cc0",
+        "name": "converter",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 480,
+        "y": 580,
+        "wires": [
+            [
+                "4c8a410913e0f318",
+                "b32657360e6ac7a8"
+            ]
+        ]
+    },
+    {
+        "id": "4c8a410913e0f318",
+        "type": "function",
+        "z": "20f0b12f04420cc0",
+        "name": "separa_campos",
+        "func": "var analogicoEtanol = { payload: msg.payload.analogicoEtanol };\n\n\nglobal.set(\"analogicoEtanol\", msg.payload.analogicoEtanol);\n\n\nreturn [analogicoEtanol];\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 640,
+        "y": 580,
+        "wires": [
+            [
+                "1c8e50e498ef1000",
+                "5927efbf53d3cfda",
+                "a5141fc9582bfa46",
+                "35ba919fd38d768c",
+                "1bef8b7b25434318",
+                "3928736beb37eb11"
+            ]
+        ]
+    },
+    {
+        "id": "1c8e50e498ef1000",
+        "type": "debug",
+        "z": "20f0b12f04420cc0",
+        "name": "Etanol",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 790,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "b746f367e209c5df",
+        "type": "comment",
+        "z": "20f0b12f04420cc0",
+        "name": "ENTRADA LEITURA DOS SENSORES",
+        "info": "POR ESSE NODE É RECEBIDO OS VALORES ENVIADOS PELOS SENSORES FÍSICOS\nENVIADOS ATRAVÉS DO ESP32, POR UM BROKER MQTT",
+        "x": 210,
+        "y": 860,
+        "wires": []
+    },
+    {
+        "id": "b32657360e6ac7a8",
+        "type": "debug",
+        "z": "20f0b12f04420cc0",
+        "name": "debug 42",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 620,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "120378d151f79de5",
+        "type": "mqtt out",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "topic": "Led/IndicaTanque",
+        "qos": "1",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "938316eab6c61a55",
+        "x": 1530,
+        "y": 900,
+        "wires": []
+    },
+    {
+        "id": "2d0889c5a278e91e",
+        "type": "debug",
+        "z": "20f0b12f04420cc0",
+        "name": "Resultado Inserção",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1050,
+        "y": 1560,
+        "wires": []
+    },
+    {
+        "id": "02f63a890d3d4a3a",
+        "type": "inject",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 480,
+        "y": 1580,
+        "wires": [
+            [
+                "47c4361d3b839d14"
+            ]
+        ]
+    },
+    {
+        "id": "47c4361d3b839d14",
+        "type": "function",
+        "z": "20f0b12f04420cc0",
+        "name": "INSERT",
+        "func": "var analogicoEtanol = global.get(\"analogicoEtanol\");\nvar analogicoGas = global.get(\"analogicoGas\");\nvar analogicoDiesel = global.get(\"analogicoDiesel\");\n\nmsg.topic = \"INSERT INTO nivel (etanol, gasolina, diesel, horario_insercao) VALUES (\" + analogicoEtanol + \",\" + analogicoGas + \",\" + analogicoDiesel + \", CURRENT_TIMESTAMP);\"\n\nreturn msg;\n\n\n/*var analogicoEtanol = global.get(\"analogicoEtanol\");\n\n\nmsg.topic = \"INSERT INTO nivel (etanol, horario_insercao) VALUES (\" + analogicoEtanol + \",CURRENT_TIMESTAMP);\"\n\nreturn msg;*/",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 1580,
+        "wires": [
+            [
+                "c7458208779acdf8",
+                "58818b8c4511ee1e"
+            ]
+        ]
+    },
+    {
+        "id": "58818b8c4511ee1e",
+        "type": "mysql",
+        "z": "20f0b12f04420cc0",
+        "mydb": "d00fc8842f489ac4",
+        "name": "conexao_mysql",
+        "x": 840,
+        "y": 1580,
+        "wires": [
+            [
+                "2d0889c5a278e91e"
+            ]
+        ]
+    },
+    {
+        "id": "1bc6bcfb82bf3900",
+        "type": "inject",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "300",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 490,
+        "y": 1660,
+        "wires": [
+            [
+                "d9f69c6f0ec76418"
+            ]
+        ]
+    },
+    {
+        "id": "d9f69c6f0ec76418",
+        "type": "function",
+        "z": "20f0b12f04420cc0",
+        "name": "SELECT",
+        "func": "//msg.topic = \"SELECT niveltanque as Nível, horario_insercao as Horário FROM nivel where horario_insercao >= now() - 84600;\"\nmsg.topic = \"SELECT etanol as Etanol, gasolina as Gasolina, diesel as Diesel, horario_insercao as Horario FROM nivel where horario_insercao >= now() - 84600;\"\nreturn msg;\n\n//msg.topic = \"SELECT * FROM tempLog where timeStamp >= now() - 84600;\"\n\n//msg.topic = \"SELECT temperature as temperatura, humidity as humidade, timeStamp FROM tempLog where timeStamp >= now() - 84600;\"\n\n//msg.topic = \"INSERT INTO tempLog (temperature,humidity) VALUES (\"+temperatura+\",\"+humidade+\" );\"\n\n//SELECT MAX(\"producaocatanduva\") as producao, time FROM \"Solar_IFSP\"  WHERE time >= now() - 30d GROUP BY time(1d)\n\n//SELECT sala as sala, cozinha as cozinha, quarto as quarto, timeStamp as timeStamp FROM tempLog where timeStamp >= now() - 84600;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 640,
+        "y": 1660,
+        "wires": [
+            [
+                "7be7163062b8ecc3"
+            ]
+        ]
+    },
+    {
+        "id": "7be7163062b8ecc3",
+        "type": "mysql",
+        "z": "20f0b12f04420cc0",
+        "mydb": "d00fc8842f489ac4",
+        "name": "conexao_mysql",
+        "x": 820,
+        "y": 1660,
+        "wires": [
+            [
+                "e45d057f56ba557a",
+                "694290738d4196cc"
+            ]
+        ]
+    },
+    {
+        "id": "8edd14fbc29ffed7",
+        "type": "comment",
+        "z": "20f0b12f04420cc0",
+        "name": "Mysql: Select últimos 10 dados para grafico e tabela",
+        "info": "",
+        "x": 590,
+        "y": 1620,
+        "wires": []
+    },
+    {
+        "id": "e45d057f56ba557a",
+        "type": "change",
+        "z": "20f0b12f04420cc0",
+        "name": "Format data",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "(\t  $series := [\t    { \"label\": \"Etanol\", \"field\": \"Etanol\" },\t    { \"label\": \"Gasolina\", \"field\": \"Gasolina\" },\t    { \"label\": \"Diesel\", \"field\": \"Diesel\" }\t  ];\t  $xaxis := \"Horario\";\t  [\t    {\t      \"series\": $series.label,\t      \"data\": $series.[\t        (\t          $yaxis := $.field;\t          $$.payload.{\t            \"x\": $lookup($, $xaxis),\t            \"y\": $lookup($, $yaxis)\t          }\t        )\t      ]\t    }\t  ]\t)",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1030,
+        "y": 1660,
+        "wires": [
+            [
+                "c1dee34cae47e548"
+            ]
+        ]
+    },
+    {
+        "id": "c1dee34cae47e548",
+        "type": "ui_chart",
+        "z": "20f0b12f04420cc0",
+        "name": "Dados de 24 Horas",
+        "group": "2d0641de88766911",
+        "order": 1,
+        "width": "7",
+        "height": "5",
+        "label": "Nível Tanques",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "HH:mm",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "10000",
+        "removeOlder": "1",
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#8cc63c",
+            "#ed1b24",
+            "#9dfcff",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1230,
+        "y": 1660,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6cf01acdcd8dbae7",
+        "type": "comment",
+        "z": "20f0b12f04420cc0",
+        "name": "Grava numero aleatorio em mysql",
+        "info": "",
+        "x": 550,
+        "y": 1540,
+        "wires": []
+    },
+    {
+        "id": "694290738d4196cc",
+        "type": "debug",
+        "z": "20f0b12f04420cc0",
+        "name": "dados mysql",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1030,
+        "y": 1620,
+        "wires": []
+    },
+    {
+        "id": "3b69a8521ffb35e0",
+        "type": "inject",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "300",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 490,
+        "y": 1740,
+        "wires": [
+            [
+                "a6c63f148a32f6e1"
+            ]
+        ]
+    },
+    {
+        "id": "a6c63f148a32f6e1",
+        "type": "function",
+        "z": "20f0b12f04420cc0",
+        "name": "SELECT",
+        "func": "msg.topic = \"SELECT etanol, gasolina, diesel, horario_insercao FROM nivel ORDER BY horario_insercao DESC LIMIT 50;\";\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 640,
+        "y": 1740,
+        "wires": [
+            [
+                "9d236a49aca60b95"
+            ]
+        ]
+    },
+    {
+        "id": "9d236a49aca60b95",
+        "type": "mysql",
+        "z": "20f0b12f04420cc0",
+        "mydb": "d00fc8842f489ac4",
+        "name": "conexao_mysql",
+        "x": 820,
+        "y": 1740,
+        "wires": [
+            [
+                "2942c6bd2bbfc3fc"
+            ]
+        ]
+    },
+    {
+        "id": "a956894f812b2cd4",
+        "type": "comment",
+        "z": "20f0b12f04420cc0",
+        "name": "Mysql: Select últimos 10 dados para grafico e tabela",
+        "info": "",
+        "x": 590,
+        "y": 1700,
+        "wires": []
+    },
+    {
+        "id": "c7458208779acdf8",
+        "type": "debug",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 810,
+        "y": 1540,
+        "wires": []
+    },
+    {
+        "id": "ee21bcfb1f2cdfe6",
+        "type": "mysql",
+        "z": "20f0b12f04420cc0",
+        "mydb": "d00fc8842f489ac4",
+        "name": "conexao_mysql",
+        "x": 820,
+        "y": 1820,
+        "wires": [
+            [
+                "f213ebeb45a76693"
+            ]
+        ]
+    },
+    {
+        "id": "c8ecef3549e2cda6",
+        "type": "function",
+        "z": "20f0b12f04420cc0",
+        "name": "DELET",
+        "func": "\nmsg.topic = \"DELETE FROM nivel;\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 640,
+        "y": 1820,
+        "wires": [
+            [
+                "ee21bcfb1f2cdfe6"
+            ]
+        ]
+    },
+    {
+        "id": "f213ebeb45a76693",
+        "type": "debug",
+        "z": "20f0b12f04420cc0",
+        "name": "dados mysql",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1050,
+        "y": 1820,
+        "wires": []
+    },
+    {
+        "id": "de171a73be3288f6",
+        "type": "inject",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 480,
+        "y": 1820,
+        "wires": [
+            [
+                "c8ecef3549e2cda6"
+            ]
+        ]
+    },
+    {
+        "id": "8d196a40f67712dc",
+        "type": "comment",
+        "z": "20f0b12f04420cc0",
+        "name": "Mysql: Deleta os dados da tabela",
+        "info": "",
+        "x": 530,
+        "y": 1780,
+        "wires": []
+    },
+    {
+        "id": "5927efbf53d3cfda",
+        "type": "switch",
+        "z": "20f0b12f04420cc0",
+        "name": "separa.analogico",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "0",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 890,
+        "y": 520,
+        "wires": [
+            [
+                "8412379fa73e3212",
+                "25fe1c9977dd60c5"
+            ]
+        ]
+    },
+    {
+        "id": "8412379fa73e3212",
+        "type": "change",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "0",
+                "fromt": "num",
+                "to": "onEtanol",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1180,
+        "y": 520,
+        "wires": [
+            [
+                "120378d151f79de5"
+            ]
+        ]
+    },
+    {
+        "id": "199004e5b7223b65",
+        "type": "change",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "payload",
+                "fromt": "msg",
+                "to": "offEtanol",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1180,
+        "y": 560,
+        "wires": [
+            [
+                "120378d151f79de5"
+            ]
+        ]
+    },
+    {
+        "id": "a5141fc9582bfa46",
+        "type": "switch",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "neq",
+                "v": "0",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 930,
+        "y": 560,
+        "wires": [
+            [
+                "199004e5b7223b65",
+                "becb3c4170a1147d"
+            ]
+        ]
+    },
+    {
+        "id": "e81ddae4e70f41d1",
+        "type": "ui_gauge",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "group": "a139738a6814e2a9",
+        "order": 4,
+        "width": 4,
+        "height": 3,
+        "gtype": "wave",
+        "title": "Tanque Gasolina",
+        "label": "L",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "10000",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 910,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "de19fc446e81bfd4",
+        "type": "json",
+        "z": "20f0b12f04420cc0",
+        "name": "converter",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 480,
+        "y": 900,
+        "wires": [
+            [
+                "45849a5974e4fa07",
+                "7687ec03e3adac39"
+            ]
+        ]
+    },
+    {
+        "id": "45849a5974e4fa07",
+        "type": "function",
+        "z": "20f0b12f04420cc0",
+        "name": "separa_campos",
+        "func": "\nvar analogicoGas = { payload: msg.payload.analogicoGas };\n\n\nglobal.set(\"analogicoGas\", msg.payload.analogicoGas);\n\n\nreturn [ analogicoGas];\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 900,
+        "wires": [
+            [
+                "2393a00abbca9f20",
+                "e81ddae4e70f41d1",
+                "a1a624f51d60bb15",
+                "1ffc2226a0d31f63",
+                "fad8becb4787d9d3",
+                "668d98b102041082"
+            ]
+        ]
+    },
+    {
+        "id": "2393a00abbca9f20",
+        "type": "debug",
+        "z": "20f0b12f04420cc0",
+        "name": "Gasolina",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "7687ec03e3adac39",
+        "type": "debug",
+        "z": "20f0b12f04420cc0",
+        "name": "debug 44",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 620,
+        "y": 860,
+        "wires": []
+    },
+    {
+        "id": "56e5c8a74f1c7c5b",
+        "type": "ui_gauge",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "group": "a139738a6814e2a9",
+        "order": 7,
+        "width": 4,
+        "height": 3,
+        "gtype": "wave",
+        "title": "Tanque Diesel",
+        "label": "L",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "10000",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 900,
+        "y": 1200,
+        "wires": []
+    },
+    {
+        "id": "512e77a861734952",
+        "type": "json",
+        "z": "20f0b12f04420cc0",
+        "name": "converter",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 480,
+        "y": 1280,
+        "wires": [
+            [
+                "9da81699c7392565",
+                "45e08aa3d8c2ddec"
+            ]
+        ]
+    },
+    {
+        "id": "9da81699c7392565",
+        "type": "function",
+        "z": "20f0b12f04420cc0",
+        "name": "separa_campos",
+        "func": "\nvar analogicoDiesel = { payload: msg.payload.analogicoDiesel };\n\n\nglobal.set(\"analogicoDiesel\", msg.payload.analogicoDiesel);\n\nreturn [analogicoDiesel];\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 1280,
+        "wires": [
+            [
+                "f8d65cb13f13824d",
+                "56e5c8a74f1c7c5b",
+                "6b0d3943fda3b41c",
+                "343f921688558cfa",
+                "8b77d5cf6ec5d05b",
+                "e2699cf212c714f1"
+            ]
+        ]
+    },
+    {
+        "id": "f8d65cb13f13824d",
+        "type": "debug",
+        "z": "20f0b12f04420cc0",
+        "name": "Diesel",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "45e08aa3d8c2ddec",
+        "type": "debug",
+        "z": "20f0b12f04420cc0",
+        "name": "debug 45",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 620,
+        "y": 1240,
+        "wires": []
+    },
+    {
+        "id": "6b0d3943fda3b41c",
+        "type": "ui_chart",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "group": "14e9b2a51730b487",
+        "order": 5,
+        "width": 7,
+        "height": "5",
+        "label": " Gráfico ▬ Tanque Diesel",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": true,
+        "ymin": "0",
+        "ymax": "10000",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#9dfcff",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2aa22a",
+            "#98df8a",
+            "#ed1b24",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "ui_chart",
+        "x": 910,
+        "y": 1160,
+        "wires": [
+            []
+        ],
+        "info": "``<style>\r\n    .ui_chart {\r\n        /* Adicione os estilos desejados para personalizar o gráfico */\r\n        /* Exemplo de estilos: */\r\n        background-color: #f1f1f1;\r\n        /* Remova a borda */\r\n        border: 10px solid #ccc;\r\n        color: red;\r\n    }\r\n</style>``"
+    },
+    {
+        "id": "a1a624f51d60bb15",
+        "type": "switch",
+        "z": "20f0b12f04420cc0",
+        "name": "separa.analogico",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "0",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 930,
+        "y": 860,
+        "wires": [
+            [
+                "55f5cbe5a609f1ec",
+                "7b6418618234cf18"
+            ]
+        ]
+    },
+    {
+        "id": "55f5cbe5a609f1ec",
+        "type": "change",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "0",
+                "fromt": "num",
+                "to": "onGas",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1220,
+        "y": 860,
+        "wires": [
+            [
+                "120378d151f79de5"
+            ]
+        ]
+    },
+    {
+        "id": "664b56b402abfdca",
+        "type": "change",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "payload",
+                "fromt": "msg",
+                "to": "offGas",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1220,
+        "y": 900,
+        "wires": [
+            [
+                "120378d151f79de5"
+            ]
+        ]
+    },
+    {
+        "id": "1ffc2226a0d31f63",
+        "type": "switch",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "neq",
+                "v": "0",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 970,
+        "y": 900,
+        "wires": [
+            [
+                "664b56b402abfdca",
+                "82f857b21b590653"
+            ]
+        ]
+    },
+    {
+        "id": "a2e53f5b52aaaca1",
+        "type": "comment",
+        "z": "20f0b12f04420cc0",
+        "name": "LEDS TANQUE VAZIO",
+        "info": "",
+        "x": 1620,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "343f921688558cfa",
+        "type": "switch",
+        "z": "20f0b12f04420cc0",
+        "name": "separa.analogico",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "0",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 930,
+        "y": 1240,
+        "wires": [
+            [
+                "6fd14a1942f9502b",
+                "f0336c7baa9b4ee2"
+            ]
+        ]
+    },
+    {
+        "id": "6fd14a1942f9502b",
+        "type": "change",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "0",
+                "fromt": "num",
+                "to": "onDiesel",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1220,
+        "y": 1240,
+        "wires": [
+            [
+                "120378d151f79de5"
+            ]
+        ]
+    },
+    {
+        "id": "7f5266ee814a99d4",
+        "type": "change",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "payload",
+                "fromt": "msg",
+                "to": "offDiesel",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1220,
+        "y": 1280,
+        "wires": [
+            [
+                "120378d151f79de5"
+            ]
+        ]
+    },
+    {
+        "id": "8b77d5cf6ec5d05b",
+        "type": "switch",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "neq",
+                "v": "0",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 970,
+        "y": 1280,
+        "wires": [
+            [
+                "7f5266ee814a99d4",
+                "161ec2115978c008"
+            ]
+        ]
+    },
+    {
+        "id": "2942c6bd2bbfc3fc",
+        "type": "ui_template",
+        "z": "20f0b12f04420cc0",
+        "group": "6a4e2e67017b39e7",
+        "name": "Tabela MySQL",
+        "order": 1,
+        "width": "4",
+        "height": "5",
+        "format": "<style>\n  .title {\n    font-size: 1.2em;\n    text-align: center;\n    border-bottom: 2px solid #ccc;\n    padding-bottom: 5px;\n    margin-bottom: 5px;\n    color: white;\n    font-family: georgia;\n    font-weight: bold;\n    position: sticky;\n    top: 0;\n    background-color: #333;\n  }\n\n  .data-row {\n    border-bottom: 1px solid #ccc;\n    padding: 5px;\n    margin: 5px;\n    font-family: \"Arial\", sans-serif;\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n  }\n\n  .data-row span {\n    flex: 1;\n  }\n</style>\n\n<div layout=\"row\" layout-align=\"start center\">\n  <span flex class=\"title\">Etanol</span>\n  <span flex class=\"title\">Gasolina</span>\n  <span flex class=\"title\">Diesel</span>\n  <span flex style=\"text-align: right;\" class=\"title\">Horário</span>\n</div>\n\n<div layout=\"row\" layout-align=\"start center\" ng-repeat=\"row in msg.payload\" class=\"data-row\">\n  <span style=\"color: cornsilk;\">{{row.etanol}} L</span>\n  <span style=\"color: cornsilk;\">{{row.gasolina}} L</span>\n  <span style=\"color: cornsilk;\">{{row.diesel}} L</span>\n  <span style=\"color: cornsilk; text-align: right; font-weight: bold; font-family: 'Arial', sans-serif;\">{{row.horario_insercao | date:'dd/MM/yyyy  HH:mm:ss'}}</span>\n</div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1040,
+        "y": 1740,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "35ba919fd38d768c",
+        "type": "ui_chart",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "group": "14e9b2a51730b487",
+        "order": 1,
+        "width": 7,
+        "height": "5",
+        "label": " Gráfico ▬ Tanque Etanol",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": true,
+        "ymin": "0",
+        "ymax": "10000",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#8cc63c",
+            "#000000",
+            "#000000",
+            "#000000",
+            "#000000",
+            "#000000",
+            "#000000",
+            "#000000",
+            "#000000"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "ui_chart",
+        "x": 890,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "fad8becb4787d9d3",
+        "type": "ui_chart",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "group": "14e9b2a51730b487",
+        "order": 3,
+        "width": 7,
+        "height": "5",
+        "label": " Gráfico ▬ Tanque Gasolina",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": true,
+        "ymin": "0",
+        "ymax": "10000",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#ed1b24",
+            "#000000",
+            "#000000",
+            "#000000",
+            "#000000",
+            "#000000",
+            "#000000",
+            "#000000",
+            "#000000"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "ui_chart",
+        "x": 920,
+        "y": 780,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1bef8b7b25434318",
+        "type": "ui_gauge",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "group": "a139738a6814e2a9",
+        "order": 1,
+        "width": 4,
+        "height": 3,
+        "gtype": "wave",
+        "title": "Tanque Etanol",
+        "label": "L",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "10000",
+        "colors": [
+            "#ff0000",
+            "#ff0000",
+            "#ff0000"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 880,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "9ce9ac64183710bc",
+        "type": "ui_toast",
+        "z": "20f0b12f04420cc0",
+        "position": "bottom left",
+        "displayTime": "5",
+        "highlight": "red",
+        "sendall": true,
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "raw": true,
+        "className": "",
+        "topic": "Tanque Etanol",
+        "name": "Falta Combustível",
+        "x": 1190,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "4c56babe0e17f79a",
+        "type": "change",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "1",
+                "fromt": "num",
+                "to": "Acabando Combustível",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 960,
+        "y": 620,
+        "wires": [
+            [
+                "9ce9ac64183710bc"
+            ]
+        ]
+    },
+    {
+        "id": "3928736beb37eb11",
+        "type": "function",
+        "z": "20f0b12f04420cc0",
+        "name": "mostra_pop-up",
+        "func": "\nif (msg.payload < 300) {\n    msg.payload = 1;\n}\n\nif (msg.payload == 10000){\n    msg.payload = 2;\n}\n\nreturn [msg];",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "// Code added here will be run when the\n// node is being stopped or re-deployed.\nif ((msg.payload <= 3000)) {\n    msg.payload = \"Combustível Acabando\";\n}\n\nreturn [msg];",
+        "libs": [],
+        "x": 600,
+        "y": 640,
+        "wires": [
+            [
+                "cb4939cbaafd6502"
+            ]
+        ]
+    },
+    {
+        "id": "cb4939cbaafd6502",
+        "type": "switch",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "1",
+                "vt": "num"
+            },
+            {
+                "t": "eq",
+                "v": "2",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 770,
+        "y": 640,
+        "wires": [
+            [
+                "4c56babe0e17f79a"
+            ],
+            [
+                "fa18570320c4c19b"
+            ]
+        ]
+    },
+    {
+        "id": "fa18570320c4c19b",
+        "type": "change",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "2",
+                "fromt": "num",
+                "to": "Tanque Cheio",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 960,
+        "y": 660,
+        "wires": [
+            [
+                "05aecadc255c4cf5"
+            ]
+        ]
+    },
+    {
+        "id": "05aecadc255c4cf5",
+        "type": "ui_toast",
+        "z": "20f0b12f04420cc0",
+        "position": "bottom left",
+        "displayTime": "3",
+        "highlight": "green",
+        "sendall": true,
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "raw": true,
+        "className": "",
+        "topic": "Tanque Etanol",
+        "name": "Cheio Combustivel",
+        "x": 1190,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "f9932d609878e172",
+        "type": "ui_toast",
+        "z": "20f0b12f04420cc0",
+        "position": "bottom left",
+        "displayTime": "5",
+        "highlight": "red",
+        "sendall": true,
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "raw": true,
+        "className": "",
+        "topic": "Tanque Gasolina",
+        "name": "Falta Combustível",
+        "x": 1230,
+        "y": 960,
+        "wires": []
+    },
+    {
+        "id": "9e18e38ca99f5592",
+        "type": "change",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "1",
+                "fromt": "num",
+                "to": "Acabando Combustível",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1020,
+        "y": 960,
+        "wires": [
+            [
+                "f9932d609878e172"
+            ]
+        ]
+    },
+    {
+        "id": "668d98b102041082",
+        "type": "function",
+        "z": "20f0b12f04420cc0",
+        "name": "mostra_pop-up",
+        "func": "\nif (msg.payload < 300) {\n    msg.payload = 1;\n}\n\nif (msg.payload == 10000){\n    msg.payload = 2;\n}\n\nreturn [msg];",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "// Code added here will be run when the\n// node is being stopped or re-deployed.\nif ((msg.payload <= 3000)) {\n    msg.payload = \"Combustível Acabando\";\n}\n\nreturn [msg];",
+        "libs": [],
+        "x": 700,
+        "y": 980,
+        "wires": [
+            [
+                "c740ecf9b026bdb3"
+            ]
+        ]
+    },
+    {
+        "id": "c740ecf9b026bdb3",
+        "type": "switch",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "1",
+                "vt": "num"
+            },
+            {
+                "t": "eq",
+                "v": "2",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 850,
+        "y": 980,
+        "wires": [
+            [
+                "9e18e38ca99f5592"
+            ],
+            [
+                "9de9efa78e994b50"
+            ]
+        ]
+    },
+    {
+        "id": "9de9efa78e994b50",
+        "type": "change",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "2",
+                "fromt": "num",
+                "to": "Tanque Cheio",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1020,
+        "y": 1000,
+        "wires": [
+            [
+                "17fc1e4dbb68d8c1"
+            ]
+        ]
+    },
+    {
+        "id": "17fc1e4dbb68d8c1",
+        "type": "ui_toast",
+        "z": "20f0b12f04420cc0",
+        "position": "bottom left",
+        "displayTime": "3",
+        "highlight": "green",
+        "sendall": true,
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "raw": true,
+        "className": "",
+        "topic": "Tanque Gasolina",
+        "name": "Cheio Combustivel",
+        "x": 1230,
+        "y": 1000,
+        "wires": []
+    },
+    {
+        "id": "c3fb8369e1c2c3c7",
+        "type": "ui_toast",
+        "z": "20f0b12f04420cc0",
+        "position": "bottom left",
+        "displayTime": "5",
+        "highlight": "red",
+        "sendall": true,
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "raw": true,
+        "className": "",
+        "topic": "Tanque Diesel",
+        "name": "Falta Combustível",
+        "x": 1230,
+        "y": 1340,
+        "wires": []
+    },
+    {
+        "id": "5005cd85bbe9f9a1",
+        "type": "change",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "1",
+                "fromt": "num",
+                "to": "Acabando Combustível",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1020,
+        "y": 1340,
+        "wires": [
+            [
+                "c3fb8369e1c2c3c7"
+            ]
+        ]
+    },
+    {
+        "id": "e2699cf212c714f1",
+        "type": "function",
+        "z": "20f0b12f04420cc0",
+        "name": "mostra_pop-up",
+        "func": "\nif (msg.payload < 300) {\n    msg.payload = 1;\n}\n\nif (msg.payload == 10000){\n    msg.payload = 2;\n}\n\nreturn [msg];",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "// Code added here will be run when the\n// node is being stopped or re-deployed.\nif ((msg.payload <= 3000)) {\n    msg.payload = \"Combustível Acabando\";\n}\n\nreturn [msg];",
+        "libs": [],
+        "x": 700,
+        "y": 1360,
+        "wires": [
+            [
+                "4f3ef8cafcb5ebec"
+            ]
+        ]
+    },
+    {
+        "id": "4f3ef8cafcb5ebec",
+        "type": "switch",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "1",
+                "vt": "num"
+            },
+            {
+                "t": "eq",
+                "v": "2",
+                "vt": "num"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 850,
+        "y": 1360,
+        "wires": [
+            [
+                "5005cd85bbe9f9a1"
+            ],
+            [
+                "2eda13765348e305"
+            ]
+        ]
+    },
+    {
+        "id": "2eda13765348e305",
+        "type": "change",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "2",
+                "fromt": "num",
+                "to": "Tanque Cheio",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1020,
+        "y": 1380,
+        "wires": [
+            [
+                "4417d3c644d762bd"
+            ]
+        ]
+    },
+    {
+        "id": "4417d3c644d762bd",
+        "type": "ui_toast",
+        "z": "20f0b12f04420cc0",
+        "position": "bottom left",
+        "displayTime": "3",
+        "highlight": "green",
+        "sendall": true,
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "raw": true,
+        "className": "",
+        "topic": "Tanque Diesel",
+        "name": "Cheio Combustivel",
+        "x": 1230,
+        "y": 1380,
+        "wires": []
+    },
+    {
+        "id": "25fe1c9977dd60c5",
+        "type": "change",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "0",
+                "fromt": "num",
+                "to": "true",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1180,
+        "y": 400,
+        "wires": [
+            [
+                "6cc75e73b3469e97"
+            ]
+        ]
+    },
+    {
+        "id": "6cc75e73b3469e97",
+        "type": "ui_led",
+        "z": "20f0b12f04420cc0",
+        "order": 2,
+        "group": "a139738a6814e2a9",
+        "width": "4",
+        "height": "3",
+        "label": "",
+        "labelPlacement": "right",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#ff0000",
+                "value": "false",
+                "valueType": "bool"
+            },
+            {
+                "color": "#008000",
+                "value": "true",
+                "valueType": "bool"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": false,
+        "name": "Led Etanol",
+        "x": 1510,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "becb3c4170a1147d",
+        "type": "change",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "payload",
+                "fromt": "msg",
+                "to": "false",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1180,
+        "y": 440,
+        "wires": [
+            [
+                "6cc75e73b3469e97"
+            ]
+        ]
+    },
+    {
+        "id": "95ddbac51fcd8e27",
+        "type": "ui_led",
+        "z": "20f0b12f04420cc0",
+        "order": 5,
+        "group": "a139738a6814e2a9",
+        "width": "4",
+        "height": "3",
+        "label": "",
+        "labelPlacement": "right",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#ff0000",
+                "value": "false",
+                "valueType": "bool"
+            },
+            {
+                "color": "#008000",
+                "value": "true",
+                "valueType": "bool"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": false,
+        "name": "Led Gasolina",
+        "x": 1510,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "7b6418618234cf18",
+        "type": "change",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "0",
+                "fromt": "num",
+                "to": "true",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1220,
+        "y": 760,
+        "wires": [
+            [
+                "95ddbac51fcd8e27"
+            ]
+        ]
+    },
+    {
+        "id": "e8a42d78274d557d",
+        "type": "ui_led",
+        "z": "20f0b12f04420cc0",
+        "order": 8,
+        "group": "a139738a6814e2a9",
+        "width": "4",
+        "height": "3",
+        "label": "",
+        "labelPlacement": "right",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#ff0000",
+                "value": "false",
+                "valueType": "bool"
+            },
+            {
+                "color": "#008000",
+                "value": "true",
+                "valueType": "bool"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": false,
+        "name": "Led Diesel",
+        "x": 1490,
+        "y": 1160,
+        "wires": []
+    },
+    {
+        "id": "161ec2115978c008",
+        "type": "change",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "payload",
+                "fromt": "msg",
+                "to": "false",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1220,
+        "y": 1180,
+        "wires": [
+            [
+                "e8a42d78274d557d"
+            ]
+        ]
+    },
+    {
+        "id": "f0336c7baa9b4ee2",
+        "type": "change",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "0",
+                "fromt": "num",
+                "to": "true",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1220,
+        "y": 1140,
+        "wires": [
+            [
+                "e8a42d78274d557d"
+            ]
+        ]
+    },
+    {
+        "id": "82f857b21b590653",
+        "type": "change",
+        "z": "20f0b12f04420cc0",
+        "name": "",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "payload",
+                "fromt": "msg",
+                "to": "false",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1220,
+        "y": 800,
+        "wires": [
+            [
+                "95ddbac51fcd8e27"
+            ]
+        ]
+    },
+    {
+        "id": "738c2309fb501f96",
+        "type": "comment",
+        "z": "20f0b12f04420cc0",
+        "name": "CONVERTE JSON EM STRING",
+        "info": "",
+        "x": 590,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "a1446344161a0a10",
+        "type": "ui_spacer",
+        "z": "20f0b12f04420cc0",
+        "name": "spacer",
+        "group": "14e9b2a51730b487",
+        "order": 2,
+        "width": "4",
+        "height": "1"
+    },
+    {
+        "id": "eb7fffe1dcc202ac",
+        "type": "ui_spacer",
+        "z": "20f0b12f04420cc0",
+        "name": "spacer",
+        "group": "14e9b2a51730b487",
+        "order": 4,
+        "width": "4",
+        "height": "1"
+    },
+    {
+        "id": "938316eab6c61a55",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "loranviscardi.duckdns.org",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "d00fc8842f489ac4",
+        "type": "MySQLdatabase",
+        "name": "Loran_DB",
+        "host": "data-base-loran.cmrb6dtspj1m.us-east-1.rds.amazonaws.com",
+        "port": "3306",
+        "db": "nivel_tanques",
+        "tz": "21:09",
+        "charset": "UTF8"
+    },
+    {
+        "id": "2d0641de88766911",
+        "type": "ui_group",
+        "name": "Gráfico",
+        "tab": "e8ad05dbfb1d9c4f",
+        "order": 2,
+        "disp": false,
+        "width": "7",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "a139738a6814e2a9",
+        "type": "ui_group",
+        "name": "Sensor",
+        "tab": "3046f6ea24ac700b",
+        "order": 1,
+        "disp": false,
+        "width": "4",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "14e9b2a51730b487",
+        "type": "ui_group",
+        "name": "Gráficos",
+        "tab": "3046f6ea24ac700b",
+        "order": 2,
+        "disp": false,
+        "width": "7",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "6a4e2e67017b39e7",
+        "type": "ui_group",
+        "name": "Tabela ▬ Níveis ▬ Horário",
+        "tab": "e8ad05dbfb1d9c4f",
+        "order": 1,
+        "disp": false,
+        "width": "4",
+        "collapse": false,
+        "className": "",
+        "info": "``"
+    },
+    {
+        "id": "e8ad05dbfb1d9c4f",
+        "type": "ui_tab",
+        "name": "Tabela - Nível - Data - Horário",
+        "icon": "fa-database",
+        "order": 2,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "3046f6ea24ac700b",
+        "type": "ui_tab",
+        "name": "▌Controle de Nível ▬ Tanque de Combustível ▌",
+        "icon": "fa-tachometer",
+        "order": 1,
+        "disabled": false,
+        "hidden": false,
+        "info": "body {\r\n  background-color: #f1f1f1; /* Substitua pela cor desejada */\r\n}\r\n"
+    }
+]
